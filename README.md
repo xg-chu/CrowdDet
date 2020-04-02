@@ -56,9 +56,9 @@ If you use the code in your research, please cite:
 
 # Models
 
-The pre-trained model is come from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl
+We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl.
 
-More models will be released in a few days!
+More models of our method will be released in a few days!
 
 # Contact
 
