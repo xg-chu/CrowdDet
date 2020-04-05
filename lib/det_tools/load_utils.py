@@ -7,7 +7,7 @@ def _init_backbone(backbone, model_path):
     state_dict = _load_c2_pickled_weights(model_path)
     state_dict = _rename_weights_for_resnet50(state_dict)
     del state_dict['stem.conv1.bias']
-    backbone.load_state_dict(state_dict)
+    backbone.load_state_dict(state_dict, strict=False)
     own_keys = set(backbone.state_dict().keys())
     del state_dict
     return 0

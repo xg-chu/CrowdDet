@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from layers.batch_norm import FrozenBatchNorm2d
 from layers.conv2d import Conv2d
 
-has_bias = False
+has_bias = True
 
 class BaseStem(nn.Module):
     def __init__(self):

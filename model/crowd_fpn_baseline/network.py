@@ -64,7 +64,7 @@ class Network(nn.Module):
 class RPN(nn.Module):
     def __init__(self):
         super().__init__()
-        rpn_channel = 256  
+        rpn_channel = 256
         num_cell_anchors = config.num_cell_anchors
         self.rpn_conv = nn.Conv2d(256, rpn_channel, kernel_size=3, stride=1, padding=1)
         self.rpn_cls_score = nn.Conv2d(rpn_channel, num_cell_anchors, kernel_size=1, stride=1)

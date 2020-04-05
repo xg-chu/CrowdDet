@@ -1,0 +1,14 @@
+**/.DS_Store
+**/__pycache__
+**/outputs
+**/model_dump
+
+**/*.out
+**/*.json
+**/*.pkl
+**/*.pth
+**/*.log
+
+**/*.jpg
+**/*.jpeg
+**/*.png
