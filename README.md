@@ -56,9 +56,14 @@ If you use the code in your research, please cite:
 
 # Models
 
-We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl.
+We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl. (or [R-50.pkl](https://drive.google.com/open?id=1qWAwY8QOhYRazxRuIhRA55b8YDxdOR8_))
 
-More models of our method will be released in a few days!
+All models are based on ResNet-50 FPN.
+| | AP | MR | JI | Model
+| --- | --- | --- | --- | --- |
+| FPN Baseline | 0.8713 | 0.4307 | 0.7929 | [fpn_baseline.pth](https://drive.google.com/open?id=16Fiu4y3hKLYUdZGb4zBzB3xwVUCHhi23)|
+| EMD Simple | 0.9044 | 0.4251 | 0.8204 | [emd_simple.pth](https://drive.google.com/open?id=1g5Nc6nJSkDUnWQhlzxRSTpKUncGgXYCK)|
+| EMD with RM | 0.9063 | 0.4149 | 0.8245 | [emd_refine.pth](https://drive.google.com/open?id=1T70F1T8ZUseg2WtRdxCPBshqCNYxZcIq) |
 
 # Contact
 
