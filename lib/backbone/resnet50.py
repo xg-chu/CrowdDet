@@ -3,148 +3,114 @@ from torch import nn
 import torch.nn.functional as F
 
 from layers.batch_norm import FrozenBatchNorm2d
-from layers.conv2d import Conv2d
-
-has_bias = True
-
-class BaseStem(nn.Module):
-    def __init__(self):
-        super(BaseStem, self).__init__()
-        self.conv1 = Conv2d(
-            3, 64, kernel_size=7, stride=2, padding=3, bias=has_bias)
-        self.bn1 = FrozenBatchNorm2d(64)
-
-        for l in [self.conv1, ]:
-            nn.init.kaiming_uniform_(l.weight, a=1)
-            if has_bias:
-                nn.init.constant_(l.bias, 0)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        # x = F.relu_(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
-        return x
-
 
 class Bottleneck(nn.Module):
-    def __init__(
-            self, in_channels, bottleneck_channels, out_channels,
-            stride, dilation):
+    def __init__(self, in_cha, neck_cha, out_cha, stride, has_bias=False):
         super(Bottleneck, self).__init__()
 
         self.downsample = None
-        if in_channels != out_channels:
-            down_stride = stride if dilation == 1 else 1
+        if in_cha!= out_cha or stride != 1:
             self.downsample = nn.Sequential(
-                Conv2d(in_channels, out_channels,
-                    kernel_size=1, stride=down_stride, bias=has_bias),
-                FrozenBatchNorm2d(out_channels), )
-            for modules in [self.downsample, ]:
-                for l in modules.modules():
-                    if isinstance(l, Conv2d):
-                        nn.init.kaiming_uniform_(l.weight, a=1)
-                        if has_bias:
-                            nn.init.constant_(l.bias, 0)
-        if dilation > 1:
-            stride = 1
+                nn.Conv2d(in_cha, out_cha, kernel_size=1, stride=stride, bias=has_bias),
+                FrozenBatchNorm2d(out_cha),
+            )
 
         # The original MSRA ResNet models have stride in the first 1x1 conv
         # The subsequent fb.torch.resnet and Caffe2 ResNe[X]t implementations
         # have stride in the 3x3 conv
-        self.conv1 = Conv2d(
-            in_channels, bottleneck_channels, kernel_size=1, stride=stride,
-            bias=has_bias)
-        self.bn1 = FrozenBatchNorm2d(bottleneck_channels)
+        self.conv1 = nn.Conv2d(in_cha, neck_cha, kernel_size=1, stride=1, bias=has_bias)
+        self.bn1 = FrozenBatchNorm2d(neck_cha)
 
-        self.conv2 = Conv2d(
-            bottleneck_channels, bottleneck_channels,
-            kernel_size=3, stride=1, padding=dilation,
-            bias=has_bias, dilation=dilation)
-        self.bn2 = FrozenBatchNorm2d(bottleneck_channels)
+        self.conv2 = nn.Conv2d(neck_cha, neck_cha, kernel_size=3, stride=stride, padding=1, bias=has_bias)
+        self.bn2 = FrozenBatchNorm2d(neck_cha)
 
-        self.conv3 = Conv2d(
-            bottleneck_channels, out_channels, kernel_size=1, bias=has_bias)
-        self.bn3 = FrozenBatchNorm2d(out_channels)
-
-        for l in [self.conv1, self.conv2, self.conv3]:
-            nn.init.kaiming_uniform_(l.weight, a=1)
-            if has_bias:
-                nn.init.constant_(l.bias, 0)
+        self.conv3 = nn.Conv2d(neck_cha, out_cha, kernel_size=1, bias=has_bias)
+        self.bn3 = FrozenBatchNorm2d(out_cha)
 
     def forward(self, x):
         identity = x
 
-        out = self.conv1(x)
-        out = self.bn1(out)
-        # out = F.relu_(out)
-        out = F.relu(out)
-
-        out = self.conv2(out)
-        out = self.bn2(out)
-        # out = F.relu_(out)
-        out = F.relu(out)
-
-        out0 = self.conv3(out)
-        out = self.bn3(out0)
-
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = F.relu_(x)
+        x = self.conv2(x)
+        x = self.bn2(x)
+        x = F.relu_(x)
+        x = self.conv3(x)
+        x = self.bn3(x)
         if self.downsample is not None:
-            identity = self.downsample(x)
+            identity = self.downsample(identity)
 
-        out = out + identity
-        out = F.relu(out)
-
-        return out
+        x += identity
+        x = F.relu_(x)
+        return x
 
 
 class ResNet50(nn.Module):
-    def __init__(self, freeze_at):
+    def __init__(self, freeze_at, has_bias=False):
         super(ResNet50, self).__init__()
-        self.stem = BaseStem()
+        self.has_bias = has_bias
+        self.conv1 = nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=has_bias)
+        self.bn1 = FrozenBatchNorm2d(64)
 
-        self.stages = []
         block_counts = [3, 4, 6, 3]
         bottleneck_channels_list = [64, 128, 256, 512]
         out_channels_list = [256, 512, 1024, 2048]
         stride_list = [1, 2, 2, 2]
         in_channels = 64
 
-        for layer_id in range(len(block_counts)):
-            name = "layer" + str(layer_id)
-            bottleneck_channels = bottleneck_channels_list[layer_id]
-            out_channels = out_channels_list[layer_id]
-            stride = stride_list[layer_id]
+        self.layer1 = self._make_layer(block_counts[0], 64,
+            bottleneck_channels_list[0], out_channels_list[0], stride_list[0])
+        self.layer2 = self._make_layer(block_counts[1], out_channels_list[0],
+            bottleneck_channels_list[1], out_channels_list[1], stride_list[1])
+        self.layer3 = self._make_layer(block_counts[2], out_channels_list[1],
+            bottleneck_channels_list[2], out_channels_list[2], stride_list[2])
+        self.layer4 = self._make_layer(block_counts[3], out_channels_list[2],
+            bottleneck_channels_list[3], out_channels_list[3], stride_list[3])
 
-            blocks = []
-            for _ in range(block_counts[layer_id]):
-                blocks.append(
-                    Bottleneck(in_channels, bottleneck_channels, out_channels,
-                        stride, dilation=1))
-                stride = 1
-                in_channels = out_channels
-            module = nn.Sequential(*blocks)
-            in_channels = out_channels
-            self.add_module(name, module)
-            self.stages.append(name)
+        for l in self.modules():
+            if isinstance(l, nn.Conv2d):
+                nn.init.kaiming_normal_(l.weight, mode='fan_out')
+                if self.has_bias:
+                    nn.init.constant_(l.bias, 0)
 
         self._freeze_backbone(freeze_at)
+
+    def _make_layer(self, num_blocks, in_channels, bottleneck_channels, out_channels, stride):
+        layers = []
+        for _ in range(num_blocks):
+            layers.append(Bottleneck(in_channels, bottleneck_channels, out_channels, stride, self.has_bias))
+            stride = 1
+            in_channels = out_channels
+        return nn.Sequential(*layers)
 
     def _freeze_backbone(self, freeze_at):
         if freeze_at < 0:
             return
-        for stage_index in range(freeze_at):
-            if stage_index == 0:
-                m = self.stem  # stage 0 is the stem
-            else:
-                m = getattr(self, "layer" + str(stage_index))
-            for p in m.parameters():
+        if freeze_at >= 1:
+            for p in self.conv1.parameters():
                 p.requires_grad = False
+        if freeze_at >= 2:
+            for p in self.layer1.parameters():
+                p.requires_grad = False
+        if freeze_at >= 3:
+            print("Freeze too much layers! Only freeze the first 2 layers.")
 
     def forward(self, x):
         outputs = []
-        x = self.stem(x)
-        for stage_name in self.stages:
-            x = getattr(self, stage_name)(x)
-            outputs.append(x)
+        # stem
+        x = self.conv1(x)
+        x = self.bn1(x)
+        x = F.relu_(x)
+        x = F.max_pool2d(x, kernel_size=3, stride=2, padding=1)
+        # blocks
+        x = self.layer1(x)
+        outputs.append(x)
+        x = self.layer2(x)
+        outputs.append(x)
+        x = self.layer3(x)
+        outputs.append(x)
+        x = self.layer4(x)
+        outputs.append(x)
         return outputs
+

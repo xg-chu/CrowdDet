@@ -1,16 +1,9 @@
-# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
 import torch
 from torch import nn
 
 class FrozenBatchNorm2d(nn.Module):
     """
     BatchNorm2d where the batch statistics and the affine parameters are fixed.
-
-    It contains non-trainable buffers called
-    "weight" and "bias", "running_mean", "running_var",
-    initialized to perform identity transformation.
-
-    The forward is implemented by `F.batch_norm(..., training=False)`.
     """
 
     def __init__(self, num_features, eps=1e-5):
@@ -30,3 +23,4 @@ class FrozenBatchNorm2d(nn.Module):
 
     def __repr__(self):
         return "FrozenBatchNorm2d(num_features={}, eps={})".format(self.num_features, self.eps)
+

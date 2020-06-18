@@ -25,46 +25,51 @@ If you use the code in your research, please cite:
 
 # Run
 1. Requirements:
-    * python3.6.8, pytorch 1.4.0, cuda10.0
+    * python 3.6.8, pytorch 1.5.0, torchvision 0.6.0, cuda 10.0
 
 2. CrowdHuman data:
     * CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The dataset can be downloaded from http://www.crowdhuman.org/. The path of the dataset is set in `config.py`.
 
-3. Install some cuda tools:
-	```
-	cd utils/det_tools_cuda
-	python3 setup.py install
-	```
-	* Please note that it must be compiled with cuda!
-
-4. Steps to run:
+3. Steps to run:
     * Step1:  training. More training and testing settings can be set in `config.py`.
 	```
-	python3 train.py
+	cd tools
+	python3 train.py -md rcnn_fpn_baseline
 	```
     
-	* Step2:  testing. If you have multiple GPUs, you can use ` -d 0-1 ` to use more GPUs.
+	* Step2:  testing. If you have four GPUs, you can use ` -d 0-3 ` to use all of your GPUs.
+			  The result json file will be evaluated automatically.
 	```
-	python3 test.py -r 30
+	cd tools
+	python3 test.py -md rcnn_fpn_baseline -r 40
 	```
     
-	* Step3:  evaluating.
+	* Step3:  evaluating json, inference one picture and visulization json file.
+			  ` -r ` means resume epoch, ` -n ` means number of visulization pictures.
 	```
-	python3 .evaluate/compute_APMR.py --detfile ./model/crowd_emd_simple/outputs/eval_dump/dump-30.json --target_key 'box'
-	python3 .evaluate/compute_JI.py --detfile ./model/crowd_emd_simple/outputs/eval_dump/dump-30.json --target_key 'box'
+	cd tools
+	python3 eval_json.py -f your_json_path.json
+	python3 inference.py -md rcnn_fpn_baseline -r 40 -i your_image_path.png 
+	python3 visulize_json.py -f your_json_path.json -n 3
 	```
 
 # Models
-This model is retrained in Pytorch. We use MegEngine in the research, the results is better. If you want to get better results, please refer to https://github.com/megvii-model/CrowdDetection.
 
-We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl. (or [R-50.pkl](https://drive.google.com/open?id=1qWAwY8QOhYRazxRuIhRA55b8YDxdOR8_))
+We use MegEngine in the research, the results is better. If you want to get better results, please refer to https://github.com/megvii-model/CrowdDetection.
+
+<!-- We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl. (or [R-50.pkl](https://drive.google.com/open?id=1qWAwY8QOhYRazxRuIhRA55b8YDxdOR8_)) -->
 
 All models are based on ResNet-50 FPN.
 | | AP | MR | JI | Model
 | --- | --- | --- | --- | --- |
-| FPN Baseline | 0.8713 | 0.4307 | 0.7929 | [fpn_baseline.pth](https://drive.google.com/open?id=16Fiu4y3hKLYUdZGb4zBzB3xwVUCHhi23)|
-| EMD Simple | 0.9044 | 0.4251 | 0.8204 | [emd_simple.pth](https://drive.google.com/open?id=1g5Nc6nJSkDUnWQhlzxRSTpKUncGgXYCK)|
-| EMD with RM | 0.9063 | 0.4149 | 0.8245 | [emd_refine.pth](https://drive.google.com/open?id=1T70F1T8ZUseg2WtRdxCPBshqCNYxZcIq) |
+| RCNN FPN Baseline (convert from MegEngine) | 0.8718 | 0.4239 | 0.7949 | [rcnn_fpn_baseline_mge.pth](https://drive.google.com/file/d/19LBc_6vizKr06Wky0s7TAnvlqP8PjSA_/view?usp=sharing) |
+| RCNN EMD Simple (convert from MegEngine) | 0.9052 | 0.4196 | 0.8209 | [rcnn_emd_simple_mge.pth](https://drive.google.com/file/d/1f_vjFrjTxXYR5nPnYZRrU-yffYTGUnyL/view?usp=sharing) |
+| RCNN EMD with RM (convert from MegEngine) | 0.9097 | 0.4102 | 0.8271 | [rcnn_emd_refine_mge.pth](https://drive.google.com/file/d/1qYJ0b7QsYZsP5_8yIjya_kj_tu90ALDJ/view?usp=sharing) |
+<!-- | RCNN FPN Baseline | --- | --- | --- | --- |
+| RCNN EMD Simple | --- | --- | --- | --- |
+| RCNN EMD with RM | --- | --- | --- | --- |
+| Retina FPN Baseline | --- | --- | --- | --- |
+| Retina EMD Simple | --- | --- | --- | --- | -->
 
 # Contact
 
