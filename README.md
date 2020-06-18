@@ -55,6 +55,7 @@ If you use the code in your research, please cite:
 	```
 
 # Models
+This model is retrained in Pytorch. We use MegEngine in the research, the results is better. If you want to get better results, please refer to https://github.com/megvii-model/CrowdDetection.
 
 We use pre-trained model from Detectron2 Model Zoo: https://dl.fbaipublicfiles.com/detectron2/ImageNetPretrained/MSRA/R-50.pkl. (or [R-50.pkl](https://drive.google.com/open?id=1qWAwY8QOhYRazxRuIhRA55b8YDxdOR8_))
 
