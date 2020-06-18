@@ -25,7 +25,7 @@ If you use the code in your research, please cite:
 
 # Run
 1. Requirements:
-    * python 3.6.8, pytorch 1.5.0, torchvision 0.6.0, cuda 10.0
+    * python 3.6.8, pytorch 1.5.0, torchvision 0.6.0, cuda 10.1
 
 2. CrowdHuman data:
     * CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The dataset can be downloaded from http://www.crowdhuman.org/. The path of the dataset is set in `config.py`.
