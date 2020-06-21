@@ -64,11 +64,11 @@ def post_process(pred_boxes, config, scale):
         pred_boxes = pred_boxes.reshape(-1, 6)
         keep = pred_boxes[:, 4] > config.pred_cls_threshold
         pred_boxes = pred_boxes[keep]
-    if pred_boxes.shape[0] > config.detection_per_image and \
-        config.test_nms_method != 'none':
-        order = np.argsort(-pred_boxes[:, 4])
-        order = order[:config.detection_per_image]
-        pred_boxes = pred_boxes[order]
+    #if pred_boxes.shape[0] > config.detection_per_image and \
+    #    config.test_nms_method != 'none':
+    #    order = np.argsort(-pred_boxes[:, 4])
+    #    order = order[:config.detection_per_image]
+    #    pred_boxes = pred_boxes[order]
     # recovery the scale
     pred_boxes[:, :4] /= scale
     keep = pred_boxes[:, 4] > config.visulize_threshold
