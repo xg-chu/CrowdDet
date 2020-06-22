@@ -68,21 +68,9 @@ class Network(nn.Module):
         #        [cascade_cls_0, pred_bbox[:, 10][:, None]], dim=1)
         #union_cls_head_0 = combine_cls(union_cls_head_0, 0)
         #union_cls_head_1 = combine_cls(union_cls_head_1, 0)
-        ###union_cls_head_0 = union_cls_head_0.mean(axis=1)
-        ###union_cls_head_1 = union_cls_head_1.mean(axis=1)
         #pred_bbox[:, 4] = union_cls_head_0
         #pred_bbox[:, 10] = union_cls_head_1 
         return pred_bbox.cpu().detach()
-
-def combine_cls(cls_tensor, thresh=0.3):
-    num_stage = cls_tensor.shape[-1]
-    ruler = cls_tensor[:, -1]
-    mean_mask = ruler > thresh
-    multi_mask = ~mean_mask
-    result = cls_tensor[:, -1]
-    result[mean_mask] = cls_tensor[mean_mask].reshape(-1, num_stage).mean(axis=1)
-    result[multi_mask] *= cls_tensor[multi_mask, :-1].reshape(-1, num_stage-1).mean(axis=1)
-    return result
 
 class Cascade(nn.Module):
     def __init__(self, name):
@@ -220,3 +208,13 @@ def restore_bbox(rois, deltas, unnormalize=True):
         deltas = deltas + mean_opr
     pred_bbox = bbox_transform_inv_opr(rois, deltas)
     return pred_bbox
+
+def combine_cls(cls_tensor, thresh=0.3):
+    num_stage = cls_tensor.shape[-1]
+    ruler = cls_tensor[:, -1]
+    mean_mask = ruler > thresh
+    multi_mask = ~mean_mask
+    result = cls_tensor[:, -1]
+    result[mean_mask] = cls_tensor[mean_mask].reshape(-1, num_stage).mean(axis=1)
+    result[multi_mask] *= cls_tensor[multi_mask, :-1].reshape(-1, num_stage-1).mean(axis=1)
+    return result

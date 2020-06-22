@@ -22,7 +22,7 @@ class Network(nn.Module):
         self.RPN = RPN(config.rpn_channel)
         self.RCNN = RCNN()
         self.Cascade_0 = Cascade('cascade_0')
-        self.Cascade_1 = Cascade('cascade_1')
+        #self.Cascade_1 = Cascade('cascade_1')
 
     def forward(self, image, im_info, gt_boxes=None):
         image = (image - torch.tensor(config.image_mean[None, :, None, None]).type_as(image)) / (
@@ -65,19 +65,8 @@ class Network(nn.Module):
         #union_cls = torch.cat(
         #        [cascade_cls_0, pred_bbox[:, 4][:, None]], dim=1)
         #union_cls = combine_cls(union_cls, 0)
-        ##union_cls = union_cls.mean(axis=1)
         #pred_bbox[:, 4] = union_cls
         return pred_bbox.cpu().detach()
-
-def combine_cls(cls_tensor, thresh=0.3):
-    num_stage = cls_tensor.shape[-1]
-    ruler = cls_tensor[:, -1]
-    mean_mask = ruler > thresh
-    multi_mask = ~mean_mask
-    result = cls_tensor[:, -1]
-    result[mean_mask] = cls_tensor[mean_mask].reshape(-1, num_stage).mean(axis=1)
-    result[multi_mask] *= cls_tensor[multi_mask, :-1].reshape(-1, num_stage-1).mean(axis=1)
-    return result
 
 class Cascade(nn.Module):
     def __init__(self, name):
@@ -212,3 +201,13 @@ def restore_bbox(rois, deltas, unnormalize=True):
         deltas = deltas + mean_opr
     pred_bbox = bbox_transform_inv_opr(rois, deltas)
     return pred_bbox
+
+def combine_cls(cls_tensor, thresh=0.3):
+    num_stage = cls_tensor.shape[-1]
+    ruler = cls_tensor[:, -1]
+    mean_mask = ruler > thresh
+    multi_mask = ~mean_mask
+    result = cls_tensor[:, -1]
+    result[mean_mask] = cls_tensor[mean_mask].reshape(-1, num_stage).mean(axis=1)
+    result[multi_mask] *= cls_tensor[multi_mask, :-1].reshape(-1, num_stage-1).mean(axis=1)
+    return result

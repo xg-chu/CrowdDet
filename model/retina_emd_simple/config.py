@@ -26,7 +26,8 @@ class Config:
     init_weights = '/data/model/resnet50_fbaug.pth'
 
     # ----------data config---------- #
-    image_mean = np.array([102.9801, 115.9465, 122.7717])
+    image_mean = np.array([103.530, 116.280, 123.675])
+    image_std = np.array([57.375, 57.120, 58.395])
     train_image_short_size = 800
     train_image_max_size = 1400
     eval_resize = True
