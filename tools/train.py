@@ -1,7 +1,6 @@
 import os
 import sys
 import argparse
-from setproctitle import setproctitle
 import torch
 
 sys.path.insert(0, '../lib')
@@ -156,7 +155,6 @@ def multi_train(params, config, network):
     torch.multiprocessing.spawn(train_worker, nprocs=num_gpus, args=(train_config, network, config))
 
 def run_train():
-    setproctitle('train ' + os.path.split(os.path.realpath(__file__))[0])
     parser = argparse.ArgumentParser()
     parser.add_argument('--model_dir', '-md', default=None,required=True,type=str)
     parser.add_argument('--resume_weights', '-r', default=None,type=int)

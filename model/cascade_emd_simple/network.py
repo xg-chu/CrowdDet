@@ -25,8 +25,8 @@ class Network(nn.Module):
         #self.Cascade_1 = Cascade('cascade_1')
 
     def forward(self, image, im_info, gt_boxes=None):
-        image = image - torch.tensor(config.image_mean[None, :, None, None],
-                dtype=image.dtype, device=image.device)
+        image = (image - torch.tensor(config.image_mean[None, :, None, None]).type_as(image)) / (
+                torch.tensor(config.image_std[None, :, None, None]).type_as(image))
         image = get_padded_tensor(image, 64)
         if self.training:
             return self._forward_train(image, im_info, gt_boxes)

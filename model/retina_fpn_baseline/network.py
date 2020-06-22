@@ -24,8 +24,8 @@ class Network(nn.Module):
 
     def forward(self, image, im_info, gt_boxes=None):
         # pre-processing the data
-        image = image - torch.tensor(config.image_mean[None, :, None, None],
-                dtype=image.dtype, device=image.device)
+        image = (image - torch.tensor(config.image_mean[None, :, None, None]).type_as(image)) / (
+                torch.tensor(config.image_std[None, :, None, None]).type_as(image))
         image = get_padded_tensor(image, 64)
         # do inference
         # stride: 128,64,32,16,8, p7->p3
