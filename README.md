@@ -68,8 +68,8 @@ All models are based on ResNet-50 FPN.
 | RCNN FPN Baseline (convert from MegEngine) | 0.8718 | 0.4239 | 0.7949 | [rcnn_fpn_baseline_mge.pth](https://drive.google.com/file/d/19LBc_6vizKr06Wky0s7TAnvlqP8PjSA_/view?usp=sharing) |
 | RCNN EMD Simple (convert from MegEngine) | 0.9052 | 0.4196 | 0.8209 | [rcnn_emd_simple_mge.pth](https://drive.google.com/file/d/1f_vjFrjTxXYR5nPnYZRrU-yffYTGUnyL/view?usp=sharing) |
 | RCNN EMD with RM (convert from MegEngine) | 0.9097 | 0.4102 | 0.8271 | [rcnn_emd_refine_mge.pth](https://drive.google.com/file/d/1qYJ0b7QsYZsP5_8yIjya_kj_tu90ALDJ/view?usp=sharing) |
-| Retina FPN Baseline | 0.8188 | 0.5644 | 0.7316 | [retina_fpn_baseline.pth](https://drive.google.com/file/d/1w1CmE4MfYB4NT5Uyx85dPkR87gEFXhBJ/view?usp=sharing) |
-| Retina EMD Simple | 0.8292 | 0.5481 | 0.7393 | [retina_emd_simple.pth](https://drive.google.com/file/d/1LwUlTf4YAH3wp-HXAAuXyTD11SeDgwhE/view?usp=sharing) |
+| RetinaNet FPN Baseline | 0.8188 | 0.5644 | 0.7316 | [retina_fpn_baseline.pth](https://drive.google.com/file/d/1w1CmE4MfYB4NT5Uyx85dPkR87gEFXhBJ/view?usp=sharing) |
+| RetinaNet EMD Simple | 0.8292 | 0.5481 | 0.7393 | [retina_emd_simple.pth](https://drive.google.com/file/d/1LwUlTf4YAH3wp-HXAAuXyTD11SeDgwhE/view?usp=sharing) |
 <!-- | RCNN FPN Baseline | --- | --- | --- | --- |
 | RCNN EMD Simple | --- | --- | --- | --- |
 | RCNN EMD with RM | --- | --- | --- | --- | -->
