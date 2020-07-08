@@ -36,7 +36,8 @@ def fpn_anchor_target_opr_core_impl(
     overlaps = box_overlap_opr(anchors, valid_gt_boxes[:, :4])
     # match the dtboxes
     max_overlaps, argmax_overlaps = torch.max(overlaps, axis=1)
-    _, gt_argmax_overlaps = torch.max(overlaps, axis=0)
+    #_, gt_argmax_overlaps = torch.max(overlaps, axis=0)
+    gt_argmax_overlaps = my_gt_argmax(overlaps)
     del overlaps
     # all ignore
     labels = torch.ones(anchors.shape[0], device=gt_boxes.device, dtype=torch.long) * ignore_label
@@ -90,6 +91,17 @@ def fpn_anchor_target(boxes, im_info, all_anchors_list):
     final_labels = torch.cat(final_labels_list, dim=0)
     final_bbox_targets = torch.cat(final_bbox_targets_list, dim=0)
     return final_labels, final_bbox_targets
+
+def my_gt_argmax(overlaps):
+    gt_max_overlaps, _ = torch.max(overlaps, axis=0)
+    gt_max_mask = overlaps == gt_max_overlaps
+    gt_argmax_overlaps = []
+    for i in range(overlaps.shape[-1]):
+        gt_max_inds = torch.nonzero(gt_max_mask[:, i], as_tuple=False).flatten()
+        gt_max_ind = gt_max_inds[torch.randperm(gt_max_inds.numel(), device=gt_max_inds.device)[0,None]]
+        gt_argmax_overlaps.append(gt_max_ind)
+    gt_argmax_overlaps = torch.cat(gt_argmax_overlaps)
+    return gt_argmax_overlaps
 
 def subsample_labels(labels, num_samples, positive_fraction):
     positive = torch.nonzero((labels != config.ignore_label) & (labels != 0), as_tuple=False).squeeze(1)
