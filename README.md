@@ -1,6 +1,6 @@
 # Detection in Crowded Scenes: One Proposal, Multiple Predictions
 
-This is the pytorch implementation of our paper "Detection in Crowded Scenes: One Proposal, Multiple Predictions", https://arxiv.org/abs/2003.09163, published in CVPR 2020.
+This is the pytorch implementation of our paper "[Detection in Crowded Scenes: One Proposal, Multiple Predictions](https://openaccess.thecvf.com/content_CVPR_2020/html/Chu_Detection_in_Crowded_Scenes_One_Proposal_Multiple_Predictions_CVPR_2020_paper.html)", https://arxiv.org/abs/2003.09163, published in CVPR 2020.
 
 Our method aiming at detecting highly-overlapped instances in crowded scenes. 
 
@@ -15,11 +15,12 @@ The network structure and results are shown here:
 
 If you use the code in your research, please cite:
 ```
-@article{chu2020detection,
-	title={Detection in Crowded Scenes: One Proposal, Multiple Predictions},
-	author={Chu, Xuangeng and Zheng, Anlin and Zhang, Xiangyu and Sun, Jian},
-	journal={arXiv preprint arXiv:2003.09163},
-	year={2020}
+@InProceedings{Chu_2020_CVPR,
+author = {Chu, Xuangeng and Zheng, Anlin and Zhang, Xiangyu and Sun, Jian},
+title = {Detection in Crowded Scenes: One Proposal, Multiple Predictions},
+booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+month = {June},
+year = {2020}
 }
 ```
 
