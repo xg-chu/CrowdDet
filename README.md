@@ -25,8 +25,16 @@ year = {2020}
 ```
 
 # Run
-1. Requirements:
-    * python 3.6.8, pytorch 1.5.0, torchvision 0.6.0, cuda 10.1
+1) Setup environment by docker
+   - Requirements: Install [nvidia-docker](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker)
+   - Create docker image:
+   ```shell
+   sudo docker build . -t crowddet
+   ```
+   - Run docker image:
+   ```shell
+   sudo docker run --gpus all --shm-size=8g -it --rm crowddet
+   ```
 
 2. CrowdHuman data:
     * CrowdHuman is a benchmark dataset to better evaluate detectors in crowd scenarios. The dataset can be downloaded from http://www.crowdhuman.org/. The path of the dataset is set in `config.py`.
