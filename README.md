@@ -8,8 +8,8 @@ The key of our approach is to let each proposal predict a set of instances that 
 
 The network structure and results are shown here:
 
-<img width=60% src="https://github.com/Purkialo/images/blob/master/CrowdDet_arch.jpg"/>
-<img width=90% src="https://github.com/Purkialo/images/blob/master/CrowdDet_demo.jpg"/>
+<img width=60% src="images/CrowdDet_arch.jpg"/>
+<img width=90% src="images/CrowdDet_demo.jpg"/>
 
 # Citation
 
